@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'production',
@@ -8,6 +9,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/',
+    globalObject: 'this',
   },
   module: {
     rules: [
@@ -17,8 +19,22 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['module:@react-native/babel-preset'],
-            plugins: ['react-native-web'],
+            presets: [
+              ['@babel/preset-env', {
+                targets: {
+                  browsers: ['last 2 versions']
+                }
+              }],
+              '@babel/preset-react',
+              '@babel/preset-typescript'
+            ],
+            plugins: [
+              'react-native-web',
+              ['@babel/plugin-transform-runtime', {
+                helpers: false,
+                regenerator: true,
+              }]
+            ],
           },
         },
       },
@@ -41,10 +57,27 @@ module.exports = {
       'react-native-linear-gradient': 'react-native-web-linear-gradient',
       '@react-native-async-storage/async-storage': '@react-native-async-storage/async-storage',
     },
+    fallback: {
+      "crypto": false,
+      "stream": false,
+      "assert": false,
+      "http": false,
+      "https": false,
+      "os": false,
+      "url": false,
+      "zlib": false,
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      __DEV__: false,
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
     }),
   ],
   devServer: {
