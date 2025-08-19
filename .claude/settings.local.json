@@ -7,7 +7,9 @@
       "Bash(npm run build:web:*)",
       "Bash(rm:*)",
       "Bash(npx create-next-app:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(cp:*)",
+      "Bash(true)"
     ],
     "deny": [],
     "ask": [],
